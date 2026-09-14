@@ -7,7 +7,7 @@
 #include <shellapi.h>
 #include <numeric>
 #include <algorithm>
-
+#include <fstream>
 
 
 namespace fs = std::filesystem;
@@ -116,8 +116,10 @@ std::optional<fs::directory_entry> search (fs::path path){
             break;
         }
         if (c == '\b'){
-            name.pop_back();
+            if(name.length() > 0){
+            name.pop_back();}
         }
+        
         else{
             name.push_back(c);
         }
@@ -404,11 +406,80 @@ void open_file(const fs::path& p){
     );
 }
 
+void print_logo(){
+    std::cout<<"    _____            _____                        _______                                    _______________           \n";
+    std::cout<<"   /|     |         /    /                       / /     \\                                  /  /            \\\n";
+    std::cout<<"  / |     |        /    /                       / /   _   \\                                |   |     __      |\n";
+    std::cout<<" |  |     |       /    /                       | |   | |   |                               |   |    |  |     |\n";
+    std::cout<<" |  |     |      /    /                        | |   | |___|               __              |   |    |  |     |\n";
+    std::cout<<" |  |     |     /    /                         |  \\   \\                   |  |             |   |    |__|     |\n";
+    std::cout<<" |  |     |    /    /   __                 __   \\  \\   \\                  |  |             |   |            /\n";
+    std::cout<<" |  |     |___/    /   |__|               |__|   \\  \\   \\                 |  |             |   |     __     \\ \n";
+    std::cout<<" |  |             /     __    __     __    __   ____ \\   \\     _______    |  |    ______   |   |    |  \\     \\ \n";
+    std::cout<<" |  |            /     |  |  |  \\   /  |  |  | | |  | |    |  |   __  \\   |  |   /   _  \\  |   |    |   \\     \\\n";
+    std::cout<<" |  |___________/      |  |  |   \\_/   |  |  | | |  |_|    |  |  |  |  |  |  |  |   | |  | |   |    |\\   \\     \\ \n";
+    std::cout<<" | /           /       |  |  |         |  |  |  \\ \\       /   |  |__|  |  |  |  |   |_|  | |   |    | \\   \\     |\n";
+    std::cout<<" |/___________/        |__|  |__|\\_/|__|  |__|   \\_\\_____/    |   ____/   |__|   \\______/  |___|____|  \\___\\____|\n";
+    std::cout<<"                                                              |  |                           \n";
+    std::cout<<"                                                              |  |                            \n  ";
+    std::cout<<"                                                            |__|\n";
+
+    std::cout<<std::endl;
+    std::cout<<std::endl;
+}
+
+void set_deault(std::string replacement){
+    std::ofstream outFile("default.txt"); // creates/opens file for writing
+    if (outFile.is_open()) {
+        outFile << replacement;
+        outFile.close();
+    }
+}
+
+std::string get_default(){
+    std::ifstream inFile("default.txt");
+    std::stringstream buffer;
+
+    if (inFile.is_open()) {
+        buffer << inFile.rdbuf(); // reads entire file into buffer
+        inFile.close();
+    }
+
+    std::string content = buffer.str();
+    return content;
+}
+
+
+
 int main() {
+    
+
+
+
+    print_logo();
+
+
     std::string input;
-    std::cout<<"Enter a path to start with:  ";
+
+    std::cout<<"Current Deault path = "<<get_default()<<std::endl;
+    std::cout<<"\033[32m"<<"Enter a path to start with(Press [;] to load default or ['] to change deafult path):  "<<"\033[0m";
+
 
     std::getline(std::cin, input);
+
+    
+    if (input == ";"){
+        input = get_default();
+    }
+    else if(input == "'"){
+        std::cout<<"\nEnter the new path that you want to make default: ";
+        std::string new_input;
+        
+        std::getline(std::cin, new_input);
+        set_deault(new_input);
+        input = new_input;
+    }
+
 
     fs::path my_path = input;
 
