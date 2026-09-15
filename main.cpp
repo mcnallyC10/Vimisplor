@@ -428,14 +428,6 @@ void print_logo(){
     std::cout<<std::endl;
 }
 
-void set_deault(std::string replacement){
-    std::ofstream outFile("default.txt"); // creates/opens file for writing
-    if (outFile.is_open()) {
-        outFile << replacement;
-        outFile.close();
-    }
-}
-
 std::string get_default(){
     std::ifstream inFile("default.txt");
     std::stringstream buffer;
@@ -449,6 +441,21 @@ std::string get_default(){
     return content;
 }
 
+std::string set_deault(std::string replacement){
+    if (check_path(replacement)){   
+        std::ofstream outFile("default.txt"); // creates/opens file for writing
+        if (outFile.is_open()) {
+            outFile << replacement;
+            outFile.close();
+        }
+
+        return replacement;
+    }
+    else{
+        std::cout<<"Path does not exist";
+        return get_default();
+    }
+}
 
 
 int main() {
@@ -476,8 +483,8 @@ int main() {
         std::string new_input;
         
         std::getline(std::cin, new_input);
-        set_deault(new_input);
-        input = new_input;
+        std::string s = set_deault(new_input);
+        input = s;
     }
 
 
